@@ -6,11 +6,3 @@ data class AuthResponse(
     val refreshToken: String,
     val user: User
 )
-
-data class User(
-    val userId: Int,
-    val userName: String,
-    val roleName: String,
-    val roleId: Int,
-    val isActive: Boolean
-)
