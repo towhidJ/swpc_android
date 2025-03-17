@@ -6,8 +6,9 @@ data class AuthRequest(
 )
 
 
-data class LoginRequest(val username: String, val password: String)
+data class LoginRequest(val email: String, val password: String)
 data class RefreshTokenRequest(val refreshToken: String)
+data class RefreshTokenResponse(val accessToken: String)
 data class WeatherForecast(
     val date: String,
     val temperatureC: Int,
@@ -15,15 +16,17 @@ data class WeatherForecast(
     val summary: String
 )
 data class LoginResponse(
+    val userId:Int,
     val token: String,
-    val accessToken: String,
-    val refreshToken: String,
-    val user: User
+    val user: User?,
+    val role: String?
 )
 
 data class User(
     val username: String,
-    val role: String
+    val name: String,
+
+
 )
 
 data class LoginFailureResponse(

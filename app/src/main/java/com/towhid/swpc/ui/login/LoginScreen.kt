@@ -1,6 +1,5 @@
 package com.towhid.swpc.ui.login
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -26,7 +25,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,21 +39,30 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.towhid.swpc.R
-import com.towhid.swpc.viewmodel.AuthViewModel
+import com.towhid.swpc.routes.Routes
+import com.towhid.swpc.util.TokenManager
+import com.towhid.swpc.viewmodel.LoginViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import com.towhid.swpc.routes.Routes.MainRoute.DeviceList
+import com.towhid.swpc.routes.Routes.MainRoute.DeviceList.toDeviceList
+import com.towhid.swpc.routes.Routes.MainRoute.Home.toHome
 
 @Composable
-fun LoginScreen(viewModel: AuthViewModel = viewModel()) {
-    val loginResult by viewModel.loginResult.collectAsState()
-    val errorMessage by viewModel.errorMessage.collectAsState()
+fun LoginScreen(navController: NavHostController) {
 
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+
+    val viewModel: LoginViewModel = viewModel()
+
+    var email by remember { mutableStateOf("admin@swpc.com") }
+    var password by remember { mutableStateOf("admin") }
     var passwordVisible by remember { mutableStateOf(false) }
     var emailError by remember { mutableStateOf("") }
     var passwordError by remember { mutableStateOf("") }
@@ -69,20 +76,18 @@ fun LoginScreen(viewModel: AuthViewModel = viewModel()) {
     var isLoading by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
-    LaunchedEffect(loginResult) {
-        Log.d("LoginScreen", "Login result: $loginResult")
-    }
-    LaunchedEffect(loginResult) {
-        if (loginResult != null) {
-            Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
-            isLoading = false;
-        }
-    }
-
-    LaunchedEffect(errorMessage) {
-        if (errorMessage != null) {
-            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-            isLoading = false;
+    LaunchedEffect(Unit) {
+        viewModel.loginResult.collectLatest { result ->
+            isLoading = false
+            result?.onSuccess { response ->
+                TokenManager.saveTokens(context, response)
+//                navController.navigate("mainRoutes/deviceList")
+                navController.navigate("mainRoutes/home")
+//                navController.toDeviceList(response.userId) // corrected line.
+            }?.onFailure { exception ->
+                Toast.makeText(context, "Login failed: ${exception.message}", Toast.LENGTH_SHORT)
+                    .show()
+            }
         }
     }
 
@@ -153,7 +158,7 @@ fun LoginScreen(viewModel: AuthViewModel = viewModel()) {
                 passwordError = if (password.isBlank()) "Password is required" else ""
                 if (emailError.isEmpty() && passwordError.isEmpty()) {
                     isLoading = true;
-                    viewModel.login(email, password)
+                    viewModel.login(email,password)
                 }
             },
             modifier = Modifier
@@ -174,35 +179,5 @@ fun LoginScreen(viewModel: AuthViewModel = viewModel()) {
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.clickable { }
         )
-    }
-}
-
-@Composable
-fun ProtectedDataScreen(viewModel: AuthViewModel = viewModel()) {
-    val weatherForecasts by viewModel.weatherForecasts.collectAsState()
-    val errorMessage by viewModel.errorMessage.collectAsState()
-
-    Column(modifier = Modifier.padding(16.dp)) {
-        Button(onClick = { viewModel.getProtectedData() }) {
-            Text("Get Weather Forecast")
-        }
-
-        if (weatherForecasts != null) {
-            weatherForecasts?.forEach { forecast ->
-                Text("Date: ${forecast.date}")
-                Text("Temperature C: ${forecast.temperatureC}")
-                Text("Temperature F: ${forecast.temperatureF}")
-                Text("Summary: ${forecast.summary}")
-                Text("---")
-            }
-        }
-
-        if (errorMessage != null) {
-            Text("Error: $errorMessage")
-        }
-
-        Button(onClick = { viewModel.logout() }) {
-            Text("Logout")
-        }
     }
 }
