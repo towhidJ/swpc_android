@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.towhid.swpc.data.models.DeviceData
-import com.towhid.swpc.viewmodel.AuthViewModel
 import com.towhid.swpc.viewmodel.DeviceViewModel
 import com.towhid.swpc.viewmodel.LoginViewModel
 

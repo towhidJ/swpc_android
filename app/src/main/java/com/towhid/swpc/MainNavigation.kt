@@ -40,7 +40,7 @@ fun MainNavigation(navController: NavHostController) {
         AuthState.Authenticated -> {
             NavHost(navController = navController, startDestination = Routes.MainRoute.Home.route) {
                 composable(Routes.MainRoute.Home.route) {
-                    DeviceListScreen(3,navController)
+                    HomeScreen(navController)
                 }
             }
         }
