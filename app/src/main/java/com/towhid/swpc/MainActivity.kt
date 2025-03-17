@@ -27,8 +27,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val navController = rememberNavController()
-                    MainNavigation(navController) // Pass start destination to MainScreen
+//                    val navController = rememberNavController()
+                    MainNavigation() // Pass start destination to MainScreen
                 }
             }
         }

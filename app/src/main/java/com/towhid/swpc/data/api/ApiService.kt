@@ -22,5 +22,5 @@ interface ApiService {
     suspend fun getProtectedResource(@Header("Authorization") token: String): WeatherForecast
 
     @GET("/device/get")
-    fun getDevice(@Query("userId") userId: Int): Call<DeviceResponse>
+    fun getDevice(@Header("Authorization") token: String,@Query("userId") userId: Int): Call<DeviceResponse>
 }

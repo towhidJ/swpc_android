@@ -82,8 +82,8 @@ fun LoginScreen(navController: NavHostController) {
             result?.onSuccess { response ->
                 TokenManager.saveTokens(context, response)
 //                navController.navigate("mainRoutes/deviceList")
-                navController.navigate("mainRoutes/home")
-//                navController.toDeviceList(response.userId) // corrected line.
+//                navController.navigate("mainRoutes/home")
+                navController.toDeviceList(response.userId) // corrected line.
             }?.onFailure { exception ->
                 Toast.makeText(context, "Login failed: ${exception.message}", Toast.LENGTH_SHORT)
                     .show()

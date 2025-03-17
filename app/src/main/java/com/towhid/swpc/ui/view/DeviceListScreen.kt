@@ -9,20 +9,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.towhid.swpc.data.models.DeviceData
+import com.towhid.swpc.util.TokenManager
+import com.towhid.swpc.viewmodel.AuthViewModel
 import com.towhid.swpc.viewmodel.DeviceViewModel
 import com.towhid.swpc.viewmodel.LoginViewModel
 
 @Composable
-fun DeviceListScreen(userId: Int,navController: NavHostController) {
+fun DeviceListScreen(token:String,userId: Int,navController: NavHostController) {
     val viewModel: DeviceViewModel = viewModel()
     val authViewModel: LoginViewModel = viewModel()
-
     LaunchedEffect(userId) {
-        viewModel.fetchDevices(userId)
+        viewModel.fetchDevices(token,userId)
     }
 
     val devices = viewModel.devices.value

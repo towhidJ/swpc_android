@@ -21,11 +21,11 @@ class DeviceViewModel : ViewModel() {
     var isLoading = mutableStateOf(false)
         private set
 
-    fun fetchDevices(userId: Int) {
+    fun fetchDevices(token: String, userId: Int) {
         viewModelScope.launch {
             isLoading.value = true // Set loading state to true
             val apiService = RetrofitClient.apiService
-            val call = apiService.getDevice(userId)
+            val call = apiService.getDevice("Bearer $token", userId)
 
             call.enqueue(object : Callback<DeviceResponse> {
                 override fun onResponse(

@@ -87,13 +87,13 @@ object TokenManager {
     }
 
 
-    suspend fun isTokenValid(context: Context): Boolean {
-        val token = getGeneralToken(context) ?: return false // Return false if token is null
+    suspend fun isTokenValid(token:String): Boolean {
+        val tok = token ?: return false // Return false if token is null
         return try {
             val claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey()) // Replace with your signing key retrieval
                 .build()
-                .parseClaimsJws(token)
+                .parseClaimsJws(tok)
                 .body
 
             val expirationDate = claims.expiration
