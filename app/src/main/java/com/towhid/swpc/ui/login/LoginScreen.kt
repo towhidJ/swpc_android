@@ -53,7 +53,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import com.towhid.swpc.routes.Routes.MainRoute.DeviceList
 import com.towhid.swpc.routes.Routes.MainRoute.DeviceList.toDeviceList
-import com.towhid.swpc.routes.Routes.MainRoute.Home.toHome
+
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
@@ -61,7 +61,7 @@ fun LoginScreen(navController: NavHostController) {
 
     val viewModel: LoginViewModel = viewModel()
 
-    var email by remember { mutableStateOf("admin@swpc.com") }
+    var email by remember { mutableStateOf("towhid@swpc.com") }
     var password by remember { mutableStateOf("admin") }
     var passwordVisible by remember { mutableStateOf(false) }
     var emailError by remember { mutableStateOf("") }

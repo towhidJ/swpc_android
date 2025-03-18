@@ -29,9 +29,9 @@ object TokenManager {
     suspend fun saveTokens(context: Context, loginResponse: LoginResponse) {
 
         context.dataStore.edit { preferences ->
-            preferences[ACCESS_TOKEN_KEY] = loginResponse.token
+            preferences[ACCESS_TOKEN_KEY] = loginResponse.accessToken
             preferences[USER_ID_KEY] = loginResponse.userId ?: -1 // Store -1 if userId is null
-            preferences[GENERAL_TOKEN_KEY] = loginResponse.token
+            preferences[GENERAL_TOKEN_KEY] = loginResponse.accessToken
             preferences[USER_ROLE_KEY] = loginResponse.role ?: "" // Store empty string if role is null
 
             // Serialize the User object to a JSON string

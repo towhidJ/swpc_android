@@ -17,7 +17,7 @@ data class WeatherForecast(
 )
 data class LoginResponse(
     val userId:Int,
-    val token: String,
+    val accessToken: String,
     val user: User?,
     val role: String?
 )

@@ -1,6 +1,8 @@
 package com.towhid.swpc.routes
 
 import androidx.navigation.NavController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 
 sealed class Routes(val route: String) {
 
@@ -22,8 +24,18 @@ sealed class Routes(val route: String) {
             fun NavController.toHome() = navigate("${MainRoute.route}/home")
         }
 
-        data object DeviceList : Routes("${MainRoute.route}/deviceList/{userId}") {
-            fun NavController.toDeviceList(userId: Int) = navigate("${MainRoute.route}/deviceList/$userId")
+        object DeviceList :Routes("$route/deviceList/{userId}") {
+            fun NavController.toDeviceList(userId: Int) {
+                navigate("mainRoutes/deviceList/$userId")
+            }
+
+            fun toDeviceListString(userId: Int): String {
+                return "mainRoutes/deviceList/$userId"
+            }
+
+            val arguments = listOf(
+                navArgument("userId") { type = NavType.IntType }
+            )
         }
     }
 

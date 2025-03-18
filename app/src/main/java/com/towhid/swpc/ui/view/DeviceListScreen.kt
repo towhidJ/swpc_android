@@ -1,9 +1,11 @@
 package com.towhid.swpc.ui.view
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -14,33 +16,58 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.towhid.swpc.data.models.DeviceData
+import com.towhid.swpc.routes.Routes
+import com.towhid.swpc.routes.Routes.MainRoute.Login.toLogin
 import com.towhid.swpc.util.TokenManager
 import com.towhid.swpc.viewmodel.AuthViewModel
 import com.towhid.swpc.viewmodel.DeviceViewModel
 import com.towhid.swpc.viewmodel.LoginViewModel
 
 @Composable
-fun DeviceListScreen(token:String,userId: Int,navController: NavHostController) {
+fun DeviceListScreen(token: String, userId: Int, navController: NavHostController) {
     val viewModel: DeviceViewModel = viewModel()
     val authViewModel: LoginViewModel = viewModel()
+    val context = LocalContext.current
+    // Fetch devices when the screen is launched or userId changes
     LaunchedEffect(userId) {
-        viewModel.fetchDevices(token,userId)
+        viewModel.fetchDevices(token, userId)
     }
 
     val devices = viewModel.devices.value
     val errorMessage = viewModel.errorMessage.value
 
     Column(modifier = Modifier.fillMaxSize()) {
-//        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End){
-//            Button(onClick = {
-//                authViewModel.logout()
-//                navController.navigate("login") {
-//                    popUpTo("deviceList/{userId}") { inclusive = true }
-//                }
-//            }) {
-//                Text("Logout")
-//            }
-//        }
+        // Logout button at the top-right corner
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Button(
+                onClick = {
+                    authViewModel.logout(
+                        token = token,
+                        onSuccess = {
+                            // Navigate to the login screen after successful logout
+
+                            navController.navigate("login") {
+                                popUpTo("deviceList/{userId}") { inclusive = true }
+                            }
+                            navController.toLogin()
+                        },
+                        onError = { errorMessage ->
+                            // Show an error message (e.g., using a Snackbar or Toast)
+                            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                }
+            ) {
+                Text("Logout")
+            }
+        }
+
+        // Display error message, loading state, or device list
         if (errorMessage != null) {
             Text("Error: $errorMessage")
         } else if (devices == null) {
@@ -57,13 +84,22 @@ fun DeviceListScreen(token:String,userId: Int,navController: NavHostController) 
         }
     }
 }
-
 @Composable
 fun DeviceItem(device: DeviceData) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text("Device ID: ${device.deviceId}")
-        Text("Device Name: ${device.deviceName ?: "N/A"}")
-        Text("User ID: ${device.userId}")
-        Text("Caretaker ID: ${device.caretakerId ?: "N/A"}")
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp) // Add padding for better spacing
+    ) {
+        Text(text = "Device ID: ${device.device_name}", style = MaterialTheme.typography.body1)
+        Text(
+            text = "Device Name: ${device.user_device_name ?: "N/A"}",
+            style = MaterialTheme.typography.body1
+        )
+        Text(text = "User ID: ${device.user_id}", style = MaterialTheme.typography.body1)
+        Text(
+            text = "Caretaker ID: ${device.caretaker_id ?: "N/A"}",
+            style = MaterialTheme.typography.body1
+        )
     }
 }

@@ -1,6 +1,7 @@
 package com.towhid.swpc.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,11 +17,13 @@ import com.towhid.swpc.data.api.ApiService
 import com.towhid.swpc.data.api.RetrofitClient
 import com.towhid.swpc.data.models.LoginRequest
 import com.towhid.swpc.data.models.LoginResponse
+import com.towhid.swpc.data.models.LogoutResponse
 import com.towhid.swpc.util.TokenManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import retrofit2.Response
 
 
 class LoginViewModel(application: Application) : AndroidViewModel(application) {
@@ -54,6 +57,27 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                 _loginResult.value = Result.failure(e)
             }
             isLoading = false
+        }
+    }
+
+    fun logout(token: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            try {
+                // Call the logout API
+                val response: Response<LogoutResponse> = RetrofitClient.apiService.logout("Bearer $token")
+                Log.d("resLogout",response.toString())
+                if (response.isSuccessful) {
+                    // Logout successful
+                    TokenManager.clearTokens(getApplication())
+                    onSuccess()
+                } else {
+                    // Handle API error
+                    onError("Logout failed: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                // Handle network or other errors
+                onError("Logout failed: ${e.message}")
+            }
         }
     }
 

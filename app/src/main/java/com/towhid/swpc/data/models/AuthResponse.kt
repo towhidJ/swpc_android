@@ -6,3 +6,7 @@ data class AuthResponse(
     val refreshToken: String,
     val user: User
 )
+
+data class LogoutResponse(
+    val message: String
+)

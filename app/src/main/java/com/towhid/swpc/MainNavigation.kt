@@ -10,10 +10,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.towhid.swpc.routes.Routes
+import com.towhid.swpc.routes.Routes.MainRoute.DeviceList.toDeviceList
 import com.towhid.swpc.ui.login.LoginScreen
 import com.towhid.swpc.ui.view.DeviceListScreen
 import com.towhid.swpc.ui.view.HomeScreen
@@ -24,72 +27,51 @@ import kotlinx.coroutines.launch
 fun MainNavigation() {
     val navController = rememberNavController()
     var authState by remember { mutableStateOf<AuthState>(AuthState.Loading) }
+
     val context = LocalContext.current
+    var startDestination by remember { mutableStateOf<String>(Routes.MainRoute.Login.route) }
 
     var token by remember { mutableStateOf<String?>(null) }
     var userId by remember { mutableStateOf<Int?>(null) }
 
     // Check authentication state
     LaunchedEffect(Unit) {
-        val fetchedToken = TokenManager.getGeneralToken(context)
         val user = TokenManager.getUserId(context)
-        token = fetchedToken
-        userId=user;
-        authState = AuthState.Authenticated
-    }
-
-    // Display UI based on authentication state
-    when (authState) {
-        AuthState.Loading -> {
-            CircularProgressIndicator()
-        }
-        AuthState.Authenticated -> {
-            token?.let { userId?.let { it1 -> AuthenticatedNavHost(it, it1,navController) } }
-        }
-        AuthState.Unauthenticated -> {
-            UnauthenticatedNavHost(navController)
+        token = TokenManager.getGeneralToken(context) ?: ""
+        if (user != null && user > 0) {
+            startDestination = Routes.MainRoute.DeviceList.toDeviceListString(user)
+        } else {
+            startDestination = Routes.MainRoute.Login.route
         }
     }
-}
-
-@Composable
-fun AuthenticatedNavHost(token:String,userId:Int,navController: NavHostController) {
 
 
-
-    NavHost(navController = navController, startDestination = Routes.MainRoute.DeviceList.route) {
-        composable(Routes.MainRoute.Home.route) {
-            HomeScreen(navController)
-        }
-        composable(Routes.MainRoute.DeviceList.route) {
-            if (token!=null && userId!= null ) {
-
-                 DeviceListScreen(token,userId,navController)
-            } else {
-                LoginScreen(navController)
-                // Handle error: userId is missing or invalid
-                Log.e("MainNavigation", "Invalid userId in DeviceList route")
-            }
-        }
-    }
-}
-
-@Composable
-fun UnauthenticatedNavHost(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = Routes.MainRoute.Login.route) {
+    NavHost(navController = navController, startDestination = startDestination) {
         composable(Routes.MainRoute.Login.route) {
             LoginScreen(navController)
         }
         composable(Routes.MainRoute.Home.route) {
             HomeScreen(navController)
         }
-
+        composable(
+            route = Routes.MainRoute.DeviceList.route,
+            arguments = Routes.MainRoute.DeviceList.arguments
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getInt("userId")
+            if (userId != null) {
+                DeviceListScreen(token!!,userId, navController)
+            } else {
+                // Handle error: userId is missing or invalid
+                Log.e("Navigation", "Invalid userId in DeviceList route")
+            }
+        }
+        }
     }
-}
+
+
 
 sealed class AuthState {
     object Loading : AuthState()
     object Authenticated : AuthState()
     object Unauthenticated : AuthState()
 }
-
