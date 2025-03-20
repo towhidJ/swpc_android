@@ -1,5 +1,6 @@
 package com.towhid.swpc.ui.view
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -60,6 +61,7 @@ fun DeviceListScreen(token: String, userId: Int, navController: NavHostControlle
                         },
                         onError = { errorMessage ->
                             // Show an error message (e.g., using a Snackbar or Toast)
+                            Log.e("logoutPro",errorMessage)
                             Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                         }
                     )

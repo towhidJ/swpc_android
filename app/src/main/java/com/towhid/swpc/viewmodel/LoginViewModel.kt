@@ -45,6 +45,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
             isLoading = true
             try {
                 val response = apiService.login(LoginRequest(username, password))
+                Log.e("logres",response.toString())
                 TokenManager.saveTokens(getApplication(), response)
                 _loginResult.value = Result.success(response)
             } catch (e: Exception) {

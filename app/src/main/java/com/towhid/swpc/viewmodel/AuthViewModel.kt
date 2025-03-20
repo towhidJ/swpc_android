@@ -11,7 +11,6 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.towhid.swpc.AuthState
 import com.towhid.swpc.data.api.RetrofitClient
-import com.towhid.swpc.data.models.AuthResponse
 import com.towhid.swpc.data.models.LoginFailureResponse
 import com.towhid.swpc.data.models.LoginRequest
 import com.towhid.swpc.data.models.LoginResponse
