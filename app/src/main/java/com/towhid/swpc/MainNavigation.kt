@@ -29,7 +29,7 @@ fun MainNavigation() {
     var authState by remember { mutableStateOf<AuthState>(AuthState.Loading) }
 
     val context = LocalContext.current
-    var startDestination by remember { mutableStateOf<String>(Routes.MainRoute.Login.route) }
+    var startDestination by remember { mutableStateOf<String?>(null) }
 
     var token by remember { mutableStateOf<String?>(null) }
     var userId by remember { mutableStateOf<Int?>(null) }
@@ -45,8 +45,8 @@ fun MainNavigation() {
         }
     }
 
-
-    NavHost(navController = navController, startDestination = startDestination) {
+    if(startDestination == null) return
+    NavHost(navController = navController, startDestination = startDestination!!) {
         composable(Routes.MainRoute.Login.route) {
             LoginScreen(navController)
         }

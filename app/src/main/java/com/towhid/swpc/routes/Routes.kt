@@ -24,7 +24,7 @@ sealed class Routes(val route: String) {
             fun NavController.toHome() = navigate("${MainRoute.route}/home")
         }
 
-        object DeviceList :Routes("$route/deviceList/{userId}") {
+        data object DeviceList :Routes("$route/deviceList/{userId}") {
             fun NavController.toDeviceList(userId: Int) {
                 navigate("mainRoutes/deviceList/$userId")
             }

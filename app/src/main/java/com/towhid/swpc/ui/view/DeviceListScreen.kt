@@ -1,7 +1,13 @@
 package com.towhid.swpc.ui.view
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
@@ -9,7 +15,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -17,9 +22,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.towhid.swpc.data.models.DeviceData
 import com.towhid.swpc.routes.Routes
-import com.towhid.swpc.routes.Routes.MainRoute.Login.toLogin
-import com.towhid.swpc.util.TokenManager
-import com.towhid.swpc.viewmodel.AuthViewModel
 import com.towhid.swpc.viewmodel.DeviceViewModel
 import com.towhid.swpc.viewmodel.LoginViewModel
 
@@ -50,11 +52,11 @@ fun DeviceListScreen(token: String, userId: Int, navController: NavHostControlle
                         token = token,
                         onSuccess = {
                             // Navigate to the login screen after successful logout
-
-                            navController.navigate("login") {
-                                popUpTo("deviceList/{userId}") { inclusive = true }
+                            navController.navigate(Routes.MainRoute.Login.route) {
+                                popUpTo(Routes.MainRoute.DeviceList.route) {
+                                    inclusive = true
+                                }
                             }
-                            navController.toLogin()
                         },
                         onError = { errorMessage ->
                             // Show an error message (e.g., using a Snackbar or Toast)
@@ -84,6 +86,7 @@ fun DeviceListScreen(token: String, userId: Int, navController: NavHostControlle
         }
     }
 }
+
 @Composable
 fun DeviceItem(device: DeviceData) {
     Column(
