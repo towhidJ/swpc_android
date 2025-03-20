@@ -5,13 +5,8 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.towhid.swpc.data.api.ApiService
 import com.towhid.swpc.data.api.RetrofitClient
@@ -21,7 +16,6 @@ import com.towhid.swpc.data.models.LogoutResponse
 import com.towhid.swpc.util.TokenManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
@@ -64,8 +58,9 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             try {
                 // Call the logout API
-                val response: Response<LogoutResponse> = RetrofitClient.apiService.logout("Bearer $token")
-                Log.d("resLogout",response.toString())
+                val response: Response<LogoutResponse> =
+                    RetrofitClient.apiService.logout("Bearer $token")
+                Log.d("resLogout", response.toString())
                 if (response.isSuccessful) {
                     // Logout successful
                     TokenManager.clearTokens(getApplication())
